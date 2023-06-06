@@ -55,7 +55,19 @@
      */
     function execute() {
         // executes our message function.
-        $this->show();
+        /**
+         * If you use just one echo or print you will have a warning message like this:
+         * > :  Cannot modify header information - headers already sent by ...
+         * 
+         *  Wrong way: $this->show();
+         *  Correct: add_action(....);
+         * 
+         * if you need static call -> add_action( 'wp_head', [ __NAMESPACE__ . '\Leoon_Hello_World','show' ] ); 
+         */
+
+         add_action( 'wp_head', [ $this, 'show' ] ); //frontend
+         add_action( 'admin_head', [ $this, 'show' ] ); //admin
+
     }
  
     /**
@@ -64,7 +76,9 @@
      * >> show message function
      */
     function show() {
-        echo "First plugin with Hello World";
+        
+        echo "First plugin with Hello World"; 
+
     }
  
  }
