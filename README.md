@@ -10,6 +10,7 @@
 
 ## Table of contents
 
+- [Training](#training)
 - [Install](#install)
 - [Server](#server)
 - [Git](#git)
@@ -21,6 +22,22 @@
 - [Frontend](#frontned)
 - [Debug](#debug)
 - [CI](#ci)
+
+
+## Training
+
+- [x] How to create ["Hello World" message](https://github.com/lnoering/wordpress/tree/feature/plugin-hello-world). 
+- [x] How to disable [admin bar in frontend](https://github.com/lnoering/wordpress/tree/feature/plugin-disable-admin-bar). 
+- [x] How to create [admin menu](https://github.com/lnoering/wordpress/tree/feature/plugin-admin-menu-option). 
+- [ ] How to create admin form/input options.
+- [ ] How to create one table at database.
+- [ ] How to save data to the database.
+- [ ] How to add JS files.
+- [ ] How to add CSS files.
+- [ ] How to work like MVC structure.
+- [ ] How to use Autoload.
+- [ ] How to work with composer. 
+
 
 ## Install
 
