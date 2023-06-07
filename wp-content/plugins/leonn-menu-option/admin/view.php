@@ -2,18 +2,22 @@
 /**
  * Sample View
  */
+
+ /* 
+    <input type="text" name="lmo_text" value="<?php echo esc_attr( get_option('lmo_text') ); ?>" />
+
+ */
 ?>
+    
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-    <form action="options.php" method="post">
+    <form method="post" action="options.php">
     <?php
-    // output security fields for the registered setting "wporg_options"
-    settings_fields( 'menu_option_options' );
-    // output setting sections and their fields
-    // (sections are registered for "wporg", each field is registered to a specific section)
-    do_settings_sections( 'menu_option' );
-    // output save settings button
-    submit_button( __( 'Save Settings', 'textdomain' ) );
+        // This prints out all hidden setting fields
+        settings_fields( 'leoon_menu_option_group' );
+        do_settings_sections( 'leoon_menu_option_page' );
+        submit_button();
     ?>
     </form>
 </div>
+
