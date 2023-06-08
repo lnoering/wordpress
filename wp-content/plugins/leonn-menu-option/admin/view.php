@@ -11,7 +11,7 @@
     
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-    <form method="post" action="options.php">
+    <form method="post" action="/wp-admin/admin-post.php">
     <?php
         // This prints out all hidden setting fields
         settings_fields( 'leoon_menu_option_group' );

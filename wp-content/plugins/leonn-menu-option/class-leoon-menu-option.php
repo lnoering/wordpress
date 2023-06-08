@@ -78,6 +78,10 @@
 
         // Add link at plugin list (Activate/Deactivate/Delete) more Leoon Menu Settings to go to the settings.
         add_filter( 'plugin_action_links_' . $this->plugin, [ $this, 'plugin_links' ]);
+
+        add_action( 'admin_post_nopriv_update', [ $this, 'post_admin_form'] ); //not logged
+        add_action( "admin_post_update", [ $this, 'post_admin_form'] ); //logged
+        
     }
 
     function plugin_links( $links ) {
@@ -105,7 +109,6 @@
             plugin_dir_url(__FILE__) . 'images/icon_menu_option.png',
             20
         );
-        $this->options = get_option( 'leoon_menu_option_name' );
 
     }
 
@@ -114,7 +117,13 @@
      * Register and add settings
      */
     public function page_init_options()
-    {        
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        $first_row = $wpdb->get_row( "SELECT text as lmo_text, number as lmo_number FROM $table_name LIMIT 1" );
+
+        $this->options = (array) $first_row;
 
         register_setting(
             'leoon_menu_option_group', // Option group
@@ -132,7 +141,7 @@
         add_settings_field(
             'lmo_text', // ID
             'Option Text', // Title 
-            array( $this, 'text_callback' ), // Callback
+            [ $this, 'text_callback' ], // Callback
             'leoon_menu_option_page', // Page
             'leoon_menu_option_id' // Section           
         );      
@@ -140,7 +149,7 @@
         add_settings_field(
             'lmo_number', 
             'Option Number', 
-            array( $this, 'number_callback' ), 
+            [ $this, 'number_callback' ], 
             'leoon_menu_option_page', 
             'leoon_menu_option_id'
         );      
@@ -193,6 +202,10 @@
         );
     }
 
+    /**
+     * Create the table at the database.
+     * This function it's called by hook.
+     */
     public function create_plugin_table() {
 
         global $leoon_menu_option_db_version;
@@ -214,6 +227,9 @@
         add_option( 'leoon_menu_option_db_version', $leoon_menu_option_db_version );
     }
 
+    /**
+     * To change the table structure at the database
+     */
     public function update_plugin_table() {
         global $wpdb;
         global $leoon_menu_option_db_version;
@@ -222,8 +238,8 @@
 
         if ( $installed_ver != $leoon_menu_option_db_version ) {
 
-            $table_name = $wpdb->prefix . self::TABLE_NAME;
-
+            // Just sample function. Need create the action you need to the SQL.
+            // $table_name = $wpdb->prefix . self::TABLE_NAME;
             // SQL to change the table
             $sql = "";
 
@@ -234,11 +250,89 @@
         }
     }
 
+    /**
+     * Check version of the table at the database need update.
+     * This function it's called by hook.
+     */
     function myplugin_update_db_check() {
         global $leoon_menu_option_db_version;
         if ( get_site_option( 'leoon_menu_option_db_version' ) != $leoon_menu_option_db_version ) {
             $this->update_plugin_table();
         }
+    }
+
+    /**
+     * Get the action from the form at admin when click at submit.
+     * This function it's called by hook.
+     */
+    public function post_admin_form() {
+        global $wpdb;
+
+        $form_url = home_url( '/' );
+
+        try {
+            //table name
+            $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+            //get return url
+            if ( ! empty( $_POST['_wp_http_referer'] ) ) {
+                $form_url = esc_url_raw( wp_unslash( $_POST['_wp_http_referer'] ) );
+            } 
+
+            //data from the form
+            $data = $_POST['leoon_menu_option_name'];
+
+            //inputs
+            $text = $data[ 'lmo_text' ];
+            $number = $data[ 'lmo_number' ];
+
+            /** 
+             * Sample - other way to save
+             * 
+             * //query to insert
+             * $sql = "INSERT INTO {$table_name} (text,number) VALUES (%s,%d)";
+             * //prepare the data
+             * $sql = $wpdb->prepare($sql,$text,$number);
+             * //save
+             * $wpdb->query($sql);
+             */
+
+            // Control to update single row every time.
+            $first_row = $wpdb->get_row( "SELECT id FROM $table_name LIMIT 1" );
+            $first_id = 1;
+
+            // if exist one row with data, get that id to update.
+            if ( isset($first_row->id) ) {
+                $first_id = $first_row->id;
+            }
+
+            //action to update
+            $result = $wpdb->update($table_name, [ 'text' => $text, 'number' => $number ], array('id' => $first_id));
+
+            //If nothing found to update, it will try and create the record.
+            if ($result === FALSE || $result < 1) {
+                $wpdb->insert($table_name, [ 'text' => $text, 'number' => $number ]);
+            }
+
+            // update the options attribute of this class.
+            $this->options = $data;
+
+            //All  works fine ?
+            wp_safe_redirect(
+                esc_url_raw(
+                    add_query_arg( 'my_status', 'success', $form_url )
+                )
+            );
+            exit();
+        } catch (\Exception $e) {
+            wp_safe_redirect(
+                esc_url_raw(
+                    add_query_arg( 'my_status', 'error', $form_url )
+                )
+            );
+            exit();
+        }
+
     }
     
  }
