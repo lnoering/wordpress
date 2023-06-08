@@ -29,9 +29,12 @@
 - [x] How to create ["Hello World" message](https://github.com/lnoering/wordpress/tree/feature/plugin-hello-world). 
 - [x] How to disable [admin bar in frontend](https://github.com/lnoering/wordpress/tree/feature/plugin-disable-admin-bar). 
 - [x] How to create [admin menu](https://github.com/lnoering/wordpress/tree/feature/plugin-admin-menu-option). 
-- [ ] How to create admin form/input options.
-- [ ] How to create one table at database.
-- [ ] How to save data to the database.
+- [x] How to create admin [form/input options](https://github.com/lnoering/wordpress/tree/feature/plugin-admin-menu-option-form-save-data).
+  + I didn't use the (get_optios/update_optios/add_options) to do that.
+- [x] How to create one [table at database](https://github.com/lnoering/wordpress/tree/feature/plugin-admin-menu-option-form-save-data).
+  + Using the wp_options table to control the version of table. (one way to change the structure if needed)
+- [x] How to [save data to the database](https://github.com/lnoering/wordpress/tree/feature/plugin-admin-menu-option-form-save-data).
+  + Using the (->insert, ->update and query to select).
 - [ ] How to add JS files.
 - [ ] How to add CSS files.
 - [ ] How to work like MVC structure.
